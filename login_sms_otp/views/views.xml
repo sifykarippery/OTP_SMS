@@ -1,0 +1,57 @@
+<odoo>
+<template id="otp_template" name="OTP Page">
+    <t t-call="web.frontend_layout">
+        <t t-set="html_data" t-value="{'style': 'height: 100%;'}"/>
+        <t t-set="body_classname" t-value="'bg-100'"/>
+        <t t-set="no_header" t-value="True"/>
+        <t t-set="no_footer" t-value="True"/>
+
+
+        <div class="container py-5">
+            <div t-attf-class="card border-0 mx-auto bg-100 {{login_card_classes}} o_database_list"
+                 style="max-width: 300px;">
+                <div class="card-body">
+                    <div t-attf-class="text-center pb-3 border-bottom {{'mb-3' if form_small else 'mb-4'}}">
+                        <img t-attf-src="/web/binary/company_logo{{ '?dbname='+db if db else '' }}" alt="Logo"
+                             style="max-height:120px; max-width: 100%; width:auto"/>
+                    </div>
+
+                    <form id="otp_form" class="oe_login_form" role="form" method="post">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                        <div class="mb-3">
+                            <p class="text-muted text-center">Check your phone for the OTP.</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="otp_code" class="form-label">Enter OTP</label>
+                            <input type="text" placeholder="OTP" name="otp_code" id="otp_code"
+                                   t-attf-class="form-control #{'form-control-sm' if form_small else ''}" required="required"
+                                   maxlength="6" pattern="[0-9]{6}" title="Please enter a 6-digit OTP"/>
+                        </div>
+
+                        <p class="alert alert-danger" id="otp_error" style="display: none;" role="alert"></p>
+                        <p class="alert alert-success" id="otp_success" style="display: none;" role="status"></p>
+
+                        <!-- OTP Timer -->
+                        <p id="otp_timer" class="text-center text-muted">Time left: <span id="timer">01:00</span></p>
+
+                        <div class="clearfix oe_login_buttons text-center gap-1 d-grid mb-1">
+                            <button type="submit" class="btn btn-primary">Verify OTP</button>
+                        </div>
+
+                        <!-- Resend OTP Button -->
+                        <div class="text-center">
+                            <button id="resend_otp" class="btn btn-link">
+                                Resend OTP
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+    </t>
+</template>
+</odoo>

@@ -1,0 +1,60 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+*.egg-info/
+
+# Odoo log and temp files
+odoo.log
+*.log
+*.swp
+*.swo
+*.DS_Store
+*.~undo-tree~
+
+# Odoo addons auto-generated files
+addons/*/static/lib/
+addons/*/__pycache__/
+addons/*/migrations/
+addons/*/*.pyc
+addons/*/*.pyo
+
+# IDE / Editor specific files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Database dumps
+*.sql
+*.sql.gz
+
+# Pip and dependency files
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Docker / Deployment
+*.pid
+*.sock
+.dockerignore
+docker-compose.override.yml
+
+# Node and frontend
+node_modules/
+npm-debug.log
+yarn.lock
+
+# Build and compiled assets
+dist/
+build/
+*.manifest
+*.pot
+*.po~
+
+# Ignore Odoo compiled assets
+addons/web/static/src/js/*.js.map
+addons/web/static/src/css/*.css.map
