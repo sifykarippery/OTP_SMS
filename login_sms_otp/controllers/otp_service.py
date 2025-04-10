@@ -69,8 +69,14 @@ class OTPService:
         _logger.debug("Generated OTP: %s for user: %s", otp, user_id)
 
     @staticmethod
+    def _clear_and_redirect(message):
+        OTPService.clear_otp_session()
+        redirect_url = f'/web/login?error={_(message)}'
+        return {"success": True, "redirect": redirect_url}
+
+    @staticmethod
     def clear_otp_session():
         """Clear OTP session data."""
-        for key in ['otp', 'otp_expiry', 'check_otp_user', 'failed_otp_attempts']:
+        for key in ['otp', 'otp_expiry', 'check_otp_user','resend_attempts', 'failed_otp_attempts']:
             request.session.pop(key, None)
         _logger.info("Cleared OTP session data")

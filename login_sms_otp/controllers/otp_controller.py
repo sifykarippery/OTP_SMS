@@ -55,7 +55,7 @@ class OTPController(Home):
     @http.route('/login/otp', type='http', auth='public', website=True,sitemap=False)
     def otp_form(self, **kw):
         """Render OTP form."""
-        if not request.session.get('check_otp_user'):
+        if not request.session.get('check_otp_user') :
             return request.redirect('/web/login?error=Session expired, please log in again')
 
         _logger.info("Rendering OTP form for user: %s", request.session.get('check_otp_user'))
@@ -65,6 +65,9 @@ class OTPController(Home):
     def validate_otp(self, **kwargs):
         """Validate the entered OTP."""
         entered_otp = kwargs.get('otp')
+        if request.session.get('failed_otp_attempts', 0) >= 5:
+            return OTPService._clear_and_redirect("Too many OTP Failed attempts")
+
         if not request.session.get('otp') or int(time.time()) > request.session.get('otp_expiry', 0):
             return {"error": _("OTP expired, please request a new one")}
 
@@ -91,7 +94,7 @@ class OTPController(Home):
 
         if request.session.get('resend_attempts', 0) >= 5:
             _logger.warning("Too many OTP resend attempts for user: %s", user_id)
-            return {"error": _("Too many OTP resend attempts. Try again later.")}
+            return OTPService._clear_and_redirect("Too many OTP resend attempts. Try again later.")
 
         request.session['resend_attempts'] = request.session.get('resend_attempts', 0) + 1
         _logger.info("Resending OTP for user: %s", user_id)
