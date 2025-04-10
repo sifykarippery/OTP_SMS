@@ -3,11 +3,19 @@
     'name': "Login_otp_sms",
 
     'summary': """
-        Attendance Base On Project And Task""",
+        Odoo login SMS OTP for selected user
+        """,
 
     'description': """
-        Odoo login SMS OTP for selected user
-    """,
+    OTP Verification (SMS)
+
+    This module adds an extra layer of security by enabling OTP-based SMS verification during user login.
+
+    Once enabled, users will receive a 6-digit One-Time Password (OTP) via SMS on their registered mobile number.
+
+    Access to the system will only be granted after successful OTP verification.
+    """
+    ,
 
     'author': "Sify Karippery Raphy",
     'website': "https://www.yourcompany.com",
@@ -25,7 +33,7 @@
     'data': [
         # 'security/ir.model.access.csv',
         'views/res_users_inherit.xml',
-        'views/views.xml',
+        'views/login_otp_templates.xml',
         'data/login_otp_sms_template.xml'
     ],
 'assets': {

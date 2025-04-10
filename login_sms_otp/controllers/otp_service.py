@@ -12,34 +12,34 @@ _logger = logging.getLogger(__name__)
 class OTPService:
     """Service class to handle OTP-related operations."""
 
-    @staticmethod
-    def authenticate_user(request):
-        """Authenticate user using XML-RPC and check OTP status."""
-        odoo_url = request.httprequest.host_url
-        db = request.db
-        username = request.params.get('login')
-        password = request.params.get('password')
-
-        _logger.info("Authenticating user: %s", username)
-
-        common = xmlrpc.client.ServerProxy(f"{odoo_url}/xmlrpc/2/common")
-        user_id = common.authenticate(db, username, password, {})
-
-        if not user_id:
-            _logger.warning("Authentication failed for user: %s", username)
-            return None
-
-        models = xmlrpc.client.ServerProxy(f"{odoo_url}/xmlrpc/2/object")
-        user_data = models.execute_kw(
-            db, user_id, password,
-            'res.users', 'read',
-            [user_id],
-            {'fields': ['otp_sms_enable']}
-        )
-
-        otp_enabled = user_data[0]['otp_sms_enable'] if user_data else False
-        _logger.info("User %s OTP status: %s", username, otp_enabled)
-        return user_id, otp_enabled
+    # @staticmethod
+    # def authenticate_user(request):
+    #     """Authenticate user using XML-RPC and check OTP status."""
+    #     odoo_url = request.httprequest.host_url
+    #     db = request.db
+    #     username = request.params.get('login')
+    #     password = request.params.get('password')
+    #
+    #     _logger.info("Authenticating user: %s", username)
+    #
+    #     common = xmlrpc.client.ServerProxy(f"{odoo_url}/xmlrpc/2/common")
+    #     user_id = common.authenticate(db, username, password, {})
+    #
+    #     if not user_id:
+    #         _logger.warning("Authentication failed for user: %s", username)
+    #         return None
+    #
+    #     models = xmlrpc.client.ServerProxy(f"{odoo_url}/xmlrpc/2/object")
+    #     user_data = models.execute_kw(
+    #         db, user_id, password,
+    #         'res.users', 'read',
+    #         [user_id],
+    #         {'fields': ['otp_sms_enable']}
+    #     )
+    #
+    #     otp_enabled = user_data[0]['otp_sms_enable'] if user_data else False
+    #     _logger.info("User %s OTP status: %s", username, otp_enabled)
+    #     return user_id, otp_enabled
 
     @staticmethod
     def generate_and_store_otp(user_id):

@@ -15,26 +15,26 @@ odoo.define('web_sms_otp.otp_verification', function (require) {
             return this._super.apply(this, arguments);
         },
 
-        _onSubmitOTP: function (event) {
+      _onSubmitOTP: function (event) {
     event.preventDefault();
 
-    let otpInput = this.$("#otp_code").val();
-    let errorContainer = this.$("#otp_error");
-
+    var otpInput = this.$("#otp_code").val();
+    var errorContainer = this.$("#otp_error");
 
     this._rpc({
         route: "/otp/validate",
         params: { otp: otpInput },
-    }).then(function (result) {
+    }).then((result) => {
         if (result.error) {
-             errorContainer.text(result.error).show();
+            errorContainer.text(result.error).show();
         } else {
-            errorContainer.text(result.error).hide();
-            window.location.href = '/web';  // Redirect manually
+            errorContainer.hide();
+            if (result.redirect) {
+                window.location.href = result.redirect;
+            }
         }
     });
 },
-
         _startTimer: function (duration) {
             let self = this;
             let timerElement = this.$("#timer");

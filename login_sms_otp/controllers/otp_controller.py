@@ -26,21 +26,21 @@ class OTPController(Home):
         values = {k: v for k, v in request.params.items() if k in SIGN_UP_REQUEST_PARAMS}
         if request.httprequest.method == 'POST':
             try:
-                auth_result = OTPService.authenticate_user(request)
-                if not auth_result:
-                    return request.redirect('/login?error=invalid_credentials')
-                user_id, otp_enabled = auth_result
+
+                uid = request.session.authenticate(request.db, request.params['login'], request.params['password'])
+                user_id = request.env['res.users'].sudo().browse(uid)
+                otp_enabled = True if user_id and user_id.otp_sms_enable == True else False
                 if not otp_enabled:
-                    uid = request.session.authenticate(request.db, request.params['login'], request.params['password'])
                     request.params['login_success'] = True
                     return request.redirect(self._login_redirect(uid))
                 else:
-                    request.session['check_otp_user'] = user_id
+                    request.session.uid=None
+                    request.session['check_otp_user'] = user_id.id
                     self.login_parameters = {
                         'login': request.params['login'],
                         'password': request.params['password']
                     }
-                    OTPService.generate_and_store_otp(user_id)
+                    OTPService.generate_and_store_otp(user_id.id)
                     return request.redirect('/login/otp')
             except AccessDenied as e:
                 if e.args == AccessDenied().args:
@@ -52,7 +52,7 @@ class OTPController(Home):
                 values['error'] = _('Only employees can access this database. Please contact the administrator.')
         return super(OTPController, self).web_login(redirect=redirect, **kw)
 
-    @http.route('/login/otp', type='http', auth='public', website=True)
+    @http.route('/login/otp', type='http', auth='public', website=True,sitemap=False)
     def otp_form(self, **kw):
         """Render OTP form."""
         if not request.session.get('check_otp_user'):
@@ -75,7 +75,8 @@ class OTPController(Home):
             OTPService.clear_otp_session()
             self.login_parameters = {}
             request.params['login_success'] = True
-            return request.redirect(self._login_redirect(uid))
+            redirect_url = self._login_redirect(uid)
+            return {"success": True, "redirect": redirect_url}
 
         _logger.warning("Invalid OTP attempt for user: %s", request.session.get('check_otp_user'))
         request.session['failed_otp_attempts'] = request.session.get('failed_otp_attempts', 0) + 1
